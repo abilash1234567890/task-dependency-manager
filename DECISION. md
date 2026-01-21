@@ -1,0 +1,133 @@
+# Design Decisions – Task Dependency Manager
+
+This document explains the key technical and architectural decisions taken while building the Task Dependency Manager.
+
+---
+
+## 1. Modeling Tasks and Dependencies
+
+Each task is represented as a node in a directed graph.
+
+- `Task` represents a unit of work.
+- `TaskDependency` represents a directed edge between two tasks.
+  - If Task A depends on Task B, an edge is created: A → B.
+
+This structure makes it easy to reason about execution order and dependency chains.
+
+---
+
+## 2. Circular Dependency Detection
+
+### Problem
+Circular dependencies such as:
+A → B → C → A  
+must be detected and prevented to avoid infinite loops and invalid execution order.
+
+---
+
+### Solution
+Circular dependency detection is implemented using **Depth-First Search (DFS)**.
+
+When a new dependency is added (Task X depends on Task Y):
+
+1. Start a DFS traversal from Task Y.
+2. Traverse all existing dependency paths recursively.
+3. If Task X is reached during traversal, a cycle exists.
+4. The dependency is rejected with a validation error.
+
+This approach correctly detects:
+- Direct cycles (A → B → A)
+- Indirect cycles (A → B → C → A)
+
+---
+
+## 3. Why DFS Was Chosen
+
+DFS was selected because:
+- It is simple and effective for detecting cycles in directed graphs.
+- It works well for both shallow and deep dependency chains.
+- It has predictable performance and is easy to reason about.
+
+### Time Complexity
+- **O(V + E)**
+  - V = number of tasks
+  - E = number of dependencies
+
+This is efficient for the expected size of the task graph.
+
+---
+
+## 4. Validation at Model Level
+
+The circular dependency check is implemented in the Django model’s `clean()` method and enforced using `full_clean()` inside `save()`.
+
+This ensures validation is applied consistently across:
+- Django Admin
+- REST API requests
+- Any future integrations
+
+No dependency can bypass the validation logic.
+
+---
+
+## 5. Automatic Task Status Updates
+
+Task status is automatically updated based on dependency states:
+
+- If any dependency is `blocked` → task becomes `blocked`
+- If all dependencies are `completed` → task becomes `in_progress`
+- If dependencies are incomplete → task remains `pending`
+
+This logic ensures task state always reflects real execution readiness.
+
+---
+
+## 6. Frontend Design Choices
+
+The frontend is implemented using:
+- HTML
+- CSS
+- Vanilla JavaScript
+
+Reasons:
+- Keeps the project lightweight and framework-independent
+- Clearly demonstrates backend logic and API integration
+- Easy to understand and evaluate
+
+---
+
+## 7. Dependency Graph Visualization
+
+The task dependency graph is visualized using **HTML5 Canvas**.
+
+- Tasks are rendered as nodes.
+- Dependencies are rendered as directed arrows.
+- Node color represents task status.
+
+A simple linear layout was chosen for clarity and ease of understanding, while still allowing future extension to hierarchical or force-directed layouts.
+
+---
+
+## 8. Error Handling Strategy
+
+- Backend returns proper HTTP error codes for invalid operations.
+- Frontend displays user-friendly alerts when errors occur (e.g., circular dependencies).
+- Errors are handled gracefully without breaking the UI.
+
+---
+
+## 9. Possible Future Improvements
+
+With additional time, the following improvements could be made:
+- Hierarchical or force-directed graph layout
+- Drag-and-drop task management
+- Improved UI styling and animations
+- Real-time updates using WebSockets
+- Role-based access control
+
+---
+
+## Conclusion
+
+The design prioritizes correctness, clarity, and maintainability.  
+Core logic is enforced at the backend level, while the frontend provides a clear and intuitive interface for interaction and visualization.
