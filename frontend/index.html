@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Dependency Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Task Dependency Manager</h1>
+
+<!-- ================= TASK LIST ================= -->
+<section>
+    <h2>Tasks</h2>
+    <ul id="taskList"></ul>
+</section>
+
+<hr>
+
+<!-- ================= ADD TASK ================= -->
+<section>
+    <h2>Add Task</h2>
+    <input id="title" placeholder="Title" />
+    <input id="description" placeholder="Description" />
+    <button onclick="addTask()">Add Task</button>
+</section>
+
+<hr>
+
+<!-- ================= ADD DEPENDENCY ================= -->
+<section>
+    <h2>Add Dependency</h2>
+
+    <label>
+        Task:
+        <select id="task"></select>
+    </label>
+
+    <label>
+        Depends on:
+        <select id="dependsOn"></select>
+    </label>
+
+    <button onclick="addDependency()">Add Dependency</button>
+</section>
+
+<hr>
+
+<!-- ================= GRAPH ================= -->
+<section>
+    <h2>Dependency Graph</h2>
+    <canvas id="graph" width="900" height="450"></canvas>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>

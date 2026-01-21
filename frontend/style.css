@@ -1,0 +1,41 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+section {
+    margin-bottom: 20px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+button {
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+input, select {
+    margin: 5px;
+}
+
+.completed { color: green; }
+.in_progress { color: blue; }
+.pending { color: gray; }
+.blocked { color: red; }
+
+canvas {
+    border: 1px solid #aaa;
+    background: #fafafa;
+}
